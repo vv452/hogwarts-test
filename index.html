@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>霍格沃茨分院与专属守护神</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.18), transparent 26%),
+            radial-gradient(circle at 80% 10%, rgba(120, 140, 255, 0.18), transparent 28%),
+            radial-gradient(circle at 50% 90%, rgba(212, 175, 55, 0.12), transparent 30%),
+            linear-gradient(180deg, #05070f 0%, #0a0f24 45%, #07091a 100%);
+        color: #fff;
+        padding: 0 14px 40px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* 星空 */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+            radial-gradient(1px 1px at 12% 18%, #fff 99%, transparent),
+            radial-gradient(1px 1px at 25% 40%, #d4af37 99%, transparent),
+            radial-gradient(1.5px 1.5px at 42% 25%, #fff 99%, transparent),
+            radial-gradient(1px 1px at 58% 55%, #d4af37 99%, transparent),
+            radial-gradient(1px 1px at 72% 30%, #fff 99%, transparent),
+            radial-gradient(1.5px 1.5px at 85% 70%, #fff 99%, transparent),
+            radial-gradient(1px 1px at 33% 75%, #d4af37 99%, transparent),
+            radial-gradient(1px 1px at 66% 85%, #fff 99%, transparent);
+        opacity: 0.45;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* 漂浮魔法粒子 */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(6px 6px at 18% 28%, rgba(212, 175, 55, 0.35), transparent 70%),
+            radial-gradient(4px 4px at 78% 22%, rgba(180, 210, 255, 0.35), transparent 70%),
+            radial-gradient(5px 5px at 48% 82%, rgba(212, 175, 55, 0.28), transparent 70%),
+            radial-gradient(3px 3px at 88% 48%, rgba(255, 255, 255, 0.25), transparent 70%);
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 0;
+        animation: floatParticles 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatParticles {
+        from { transform: translateY(0) scale(1); }
+        to { transform: translateY(-10px) scale(1.05); }
+    }
+
+    .container {
+        max-width: 640px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        padding-top: 22px;
+    }
+
+    .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 4px 18px;
+    }
+
+    .top-title {
+        font-size: 15px;
+        letter-spacing: 2px;
+        color: #d4af37;
+        font-weight: 600;
+    }
+
+    .top-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #d4af37;
+        box-shadow: 0 0 12px #d4af37;
+    }
+
+    .magic-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        border-radius: 28px;
+        padding: 26px 22px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 0 28px rgba(212,175,55,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .magic-card::before {
+        content: "";
+        position: absolute;
+        left: -20%;
+        top: -10%;
+        width: 55%;
+        height: 55%;
+        background: radial-gradient(circle, rgba(212,175,55,0.18), transparent 70%);
+        pointer-events: none;
+    }
+
+    .magic-card::after {
+        content: "";
+        position: absolute;
+        right: -18%;
+        bottom: -12%;
+        width: 45%;
+        height: 45%;
+        background: radial-gradient(circle, rgba(140,170,255,0.18), transparent 70%);
+        pointer-events: none;
+    }
+
+    /* 首页分类帽 + 魔杖 */
+    .home-inner {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hat-box {
+        margin: 10px 0 18px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hat {
+        width: 130px;
+        height: 150px;
+        position: relative;
+        display: inline-block;
+        filter: drop-shadow(0 10px 24px rgba(0,0,0,0.55));
+    }
+
+    .hat::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 18px;
+        transform: translateX(-50%);
+        width: 110px;
+        height: 72px;
+        background: radial-gradient(ellipse at 50% 40%, #4a3f2c 0%, #2d2517 45%, #1a1510 100%);
+        border-radius: 50% 50% 30% 30% / 60% 60% 30% 30%;
+        border: 2px solid #6b5a3c;
+        box-shadow: inset 0 0 18px rgba(0,0,0,0.7), inset 0 0 4px rgba(212,175,55,0.35);
+    }
+
+    .hat::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 82px;
+        transform: translateX(-50%);
+        width: 140px;
+        height: 18px;
+        background: linear-gradient(180deg, #5a4a32, #2d2517);
+        border-radius: 50%;
+        border: 2px solid #6b5a3c;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.55);
+    }
+
+    .hat-band {
+        position: absolute;
+        left: 50%;
+        top: 76px;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 10px;
+        background: linear-gradient(90deg, #d4af37, #8a7328, #d4af37);
+        border-radius: 4px;
+        z-index: 2;
+        box-shadow: 0 0 10px rgba(212,175,55,0.6);
+    }
+
+    .wand {
+        position: absolute;
+        right: 18%;
+        top: 24px;
+        width: 90px;
+        height: 10px;
+        background: linear-gradient(90deg, #d4af37, #f4e2a7, #d4af37, #8a7328);
+        border-radius: 10px;
+        transform: rotate(-22deg);
+        box-shadow: 0 0 14px rgba(212,175,55,0.55);
+        z-index: 3;
+    }
+
+    .wand::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 2px;
+        width: 14px;
+        height: 6px;
+        background: #fff8d6;
+        border-radius: 50%;
+        box-shadow: 0 0 18px #ffe9a8;
+    }
+
+    .wand::after {
+        content: "";
+        position: absolute;
+        right: -12px;
+        top: -2px;
+        width: 14px;
+        height: 14px;
+        background: radial-gradient(circle, #d4af37, #6b5a3c);
+        border-radius: 50%;
+        border: 1px solid #f4e2a7;
+    }
+
+    .title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #f7e9b5;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        text-shadow: 0 0 18px rgba(212,175,55,0.45);
+    }
+
+    .sub-title {
+        font-size: 14px;
+        color: #c9c6b3;
+        line-height: 1.7;
+        margin-bottom: 18px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(212,175,55,0.28);
+        border-radius: 20px;
+        padding: 16px;
+        margin-bottom: 22px;
+        text-align: left;
+    }
+
+    .info-card p {
+        font-size: 14px;
+        color: #ddd;
+        line-height: 1.8;
+        margin-bottom: 6px;
+    }
+
+    .info-card p:last-child {
+        color: #9a9580;
+        font-size: 13px;
+    }
+
+    .start-btn {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f7e9b5, #d4af37, #8a7328);
+        color: #1a1510;
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        cursor: pointer;
+        box-shadow: 0 10px 24px rgba(212,175,55,0.45), inset 0 0 10px rgba(255,255,255,0.35);
+        transition: transform 0.15s ease;
+    }
+
+    .start-btn:active { transform: scale(0.97); }
+
+    .progress {
+        height: 8px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 99px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(212,175,55,0.25);
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #f7e9b5, #d4af37, #8a7328);
+        width: 0%;
+        transition: width 0.25s ease;
+        box-shadow: 0 0 12px rgba(212,175,55,0.55);
+    }
+
+    .q-title {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #f7f4e4;
+        position: relative;
+        z-index: 1;
+    }
+
+    .option {
+        padding: 14px 16px;
+        border: 1px solid rgba(212,175,55,0.32);
+        border-radius: 16px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 15px;
+        background: rgba(255,255,255,0.05);
+        color: #eee;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .option:hover {
+        border-color: #d4af37;
+        background: rgba(212,175,55,0.14);
+        transform: translateX(4px);
+    }
+
+    .option.active {
+        border-color: #f7e9b5;
+        background: rgba(212,175,55,0.22);
+        color: #fff;
+        box-shadow: 0 0 14px rgba(212,175,55,0.35);
+    }
+
+    .btn-row {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .prev-btn, .next-btn {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 999px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 2px;
+    }
+
+    .prev-btn {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .prev-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .next-btn {
+        background: linear-gradient(135deg, #f7e9b5, #d4af37);
+        color: #1a1510;
+        box-shadow: 0 8px 18px rgba(212,175,55,0.4);
+    }
+
+    .result-inner {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .res-house {
+        font-size: 26px;
+        font-weight: 800;
+        color: #f7e9b5;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+        text-shadow: 0 0 16px rgba(212,175,55,0.45);
+    }
+
+    .res-patronus {
+        font-size: 20px;
+        color: #d4af37;
+        margin-bottom: 14px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .patronus-animal {
+        font-size: 54px;
+        margin: 14px 0;
+        animation: glow 2.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from { filter: drop-shadow(0 0 14px rgba(212,175,55,0.45)); }
+        to { filter: drop-shadow(0 0 24px rgba(247,233,181,0.85)); }
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 99px;
+        background: rgba(212,175,55,0.18);
+        color: #f7e9b5;
+        border: 1px solid rgba(212,175,55,0.45);
+        font-size: 14px;
+        margin-bottom: 18px;
+        letter-spacing: 2px;
+    }
+
+    .res-text {
+        font-size: 15px;
+        line-height: 1.9;
+        color: #eee;
+        text-align: left;
+        margin-bottom: 16px;
+    }
+
+    .wand-info {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(212,175,55,0.3);
+        border-radius: 18px;
+        padding: 14px;
+        font-size: 15px;
+        color: #f7e9b5;
+        text-align: center;
+        margin-bottom: 18px;
+        letter-spacing: 1px;
+    }
+
+    .tip-bottom {
+        text-align: center;
+        color: #9a9580;
+        font-size: 13px;
+        margin-top: 18px;
+        letter-spacing: 1px;
+    }
+
+    .rune {
+        position: absolute;
+        font-size: 44px;
+        color: rgba(212,175,55,0.18);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .rune-1 { top: 8%; left: 6%; }
+    .rune-2 { top: 18%; right: 8%; }
+    .rune-3 { bottom: 12%; left: 10%; }
+    .rune-4 { bottom: 20%; right: 6%; }
+
+    @media (max-width: 380px) {
+        .title { font-size: 24px; }
+        .q-title { font-size: 17px; }
+        .res-house { font-size: 23px; }
+        .hat { width: 110px; height: 130px; }
+        .wand { right: 14%; width: 76px; }
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="top-bar">
+        <span class="top-title">霍格沃茨分院测试</span>
+        <span class="top-dot"></span>
+    </div>
+
+    <!-- 首页 -->
+    <div id="home">
+        <div class="magic-card">
+            <span class="rune rune-1">✦</span>
+            <span class="rune rune-2">✧</span>
+            <span class="rune rune-3">⚬</span>
+            <span class="rune rune-4">✦</span>
+
+            <div class="home-inner">
+                <div class="hat-box">
+                    <div class="hat"><div class="hat-band"></div></div>
+                    <div class="wand"></div>
+                </div>
+
+                <h1 class="title">霍格沃茨分院与专属守护神</h1>
+                <p class="sub-title">魔法部警告：你体内的魔法觉醒，请在这里寻找你的归属与灵魂守护。</p>
+
+                <div class="info-card">
+                    <p>📜 共10道情境题，凭第一直觉选择</p>
+                    <p>✨ 完成后获得学院、守护神与专属魔杖</p>
+                    <p>同一设备仅可完成一次测试</p>
+                </div>
+
+                <button class="start-btn" onclick="startTest()">开 始 测 试</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 题目页 -->
+    <div id="questionWrap" class="magic-card" style="display:none;">
+        <span class="rune rune-1">✦</span>
+        <span class="rune rune-2">✧</span>
+        <span class="rune rune-3">⚬</span>
+        <span class="rune rune-4">✦</span>
+
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="q-title" id="qText"></div>
+        <div id="optWrap"></div>
+        <div class="btn-row">
+            <button class="prev-btn" id="prevBtn" onclick="prevQ()">上一题</button>
+            <button class="next-btn" onclick="nextQ()">下一题</button>
+        </div>
+    </div>
+
+    <!-- 结果页 -->
+    <div id="resultWrap" class="magic-card" style="display:none;">
+        <span class="rune rune-1">✦</span>
+        <span class="rune rune-2">✧</span>
+        <span class="rune rune-3">⚬</span>
+        <span class="rune rune-4">✦</span>
+
+        <div class="result-inner">
+            <div class="res-house" id="houseName"></div>
+            <div class="res-patronus" id="patronusName"></div>
+            <div class="patronus-animal" id="patronusAnimal"></div>
+            <div class="tag" id="tagText"></div>
+            <div class="res-text" id="resDesc"></div>
+            <div class="wand-info" id="wandText"></div>
+            <p class="tip-bottom">呼神护卫 ✨ 趣味测试，仅供娱乐</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const DONE_KEY = "hogwarts_patronus_done_v2";
+const ANSWER_KEY = "hogwarts_patronus_answers_v2";
+let answerArr = [];
+let cur = 0;
+
+const questions = [
+    { q:"收到霍格沃茨录取通知书那天，你最喜欢家里的哪个角落，或者最想带什么去学校？",
+      o:["带一本厚厚的历史书或百科全书（求知欲）","带上我最喜欢的舒适毛毯和零食（恋家与舒适）","带上我的小猫/小狗/猫头鹰（对伙伴的重视）","什么都不带，我已经准备好去冒险了（勇气与随性）"],
+      score:["R","H","S","G"] },
+    { q:"分院帽戴在头上，它悄悄对你说：“你在隐藏一个极大的秘密……”你的秘密是？",
+      o:["我其实是个野心家，想成为魔法部部长（野心）","我会在深夜偷偷溜进厨房找家养小精灵（烟火气）","我害怕的时候其实也想哭，但我会强装镇定（坚韧）","我知道很多别人的把柄，但我从不轻易说（机敏）"],
+      score:["S","H","G","R"] },
+    { q:"在去霍格沃茨的特快列车上，你更倾向于哪种车厢氛围？",
+      o:["激烈地讨论最新的魁地奇战术或八卦（热闹）","和几个挚友安静地分享巧克力蛙（小圈子）","一个人坐在角落看书，但随时注意着窗外的风景（独立）","主动去不同车厢串门，认识新同学（社交）"],
+      score:["G","H","R","S"] },
+    { q:"当你在禁林里遇到一只受伤的神奇动物，你的第一反应是？",
+      o:["马上冲过去试图用刚学的魔咒救它（冲动/勇敢）","保持距离，仔细观察，并去图书馆查阅相关资料（谨慎/求知）","它看起来很可怜，我把它带回公共休息室照顾吧（善良）","警惕地环顾四周，确认没有其他危险后再行动（理智）"],
+      score:["G","R","H","S"] },
+    { q:"深夜的霍格沃茨，你在有求必应屋门口遇到了对头，你会？",
+      o:["拔出魔杖，准备好决斗！（绝不退缩）","既然遇到了，不如一起进去看看里面藏了什么秘密？（好奇心）","轻蔑地笑一下，转身离开，懒得理他（高冷）","假装没看见，但心里已经想好了怎么在魔药课上整他（腹黑）"],
+      score:["G","R","S","H"] },
+    { q:"你最渴望拥有哪种魔法能力？",
+      o:["幻影移形（来去自由）","摄神取念（看透人心）","变形术（能变成任何动物）","治愈魔法（拯救生命）"],
+      score:["S","R","G","H"] },
+    { q:"在魔法世界里，你觉得最不能妥协的事情是？",
+      o:["背叛朋友","放弃自我成长和探索","失去自由和冒险的机会","尊严和底线被践踏"],
+      score:["H","R","G","S"] },
+    { q:"毕业前的最后一战，你希望自己以怎样的姿态战斗？",
+      o:["冲在最前面，用最耀眼的光芒击退黑暗（格兰芬多）","守护在后方，用精准的魔药和咒语支援队友（赫奇帕奇）","制定战术，在最关键的时刻给出致命一击（斯莱特林）","保护重要的典籍和魔法生物撤退（拉文克劳）"],
+      score:["G","H","S","R"] },
+    { q:"你最喜欢的霍格沃茨角落是哪里？",
+      o:["格兰芬多塔楼（俯瞰风景）","图书馆的禁书区（神秘未知）","有求必应屋（秘密基地）","黑湖畔的草地（惬意悠闲）"],
+      score:["G","R","S","H"] },
+    { q:"如果可以用魔法做一件事，你会做什么？",
+      o:["让所有我爱的人永远健康快乐（包容）","拯救所有濒危的神奇动物（博爱）","发明一种能让人看透谎言的魔药（求真）","建立一个完全由我掌控规则的理想世界（掌控）"],
+      score:["H","G","R","S"] }
+];
+
+const resultData = {
+    G: { house:"🦁 格兰芬多", patronus:"专属守护神：雄鹿", animal:"🦌",
+        tag:"【无畏的破局者】",
+        desc:"你从不缺乏重头再来的勇气，你的灵魂里燃烧着一团不灭的火。你召唤出的守护神是雄鹿，就像哈利的父亲一样，雄鹿代表着你在面对极度恐惧时，依然能保持高贵的品格和对所爱之人的绝对保护欲。你的魔法源于“勇敢”。",
+        wand:"适配魔杖：冬青木，凤凰羽毛｜擅长战斗和守护" },
+    H: { house:"🦡 赫奇帕奇", patronus:"专属守护神：水獭", animal:"🦦",
+        tag:"【温柔的治愈者】",
+        desc:"你不追求耀眼的光环，但你拥有最强大的韧性和最包容的心。你的守护神是水獭，水獭聪明、灵动且充满生趣。在朋友最需要的时候，你总是那个能提供情绪价值的人。你的魔法源于“忠诚”，你的平和是击退摄魂怪最有效的光。",
+        wand:"适配魔杖：梨木，独角兽毛｜最稳定的魔法核心" },
+    S: { house:"🐍 斯莱特林", patronus:"专属守护神：天鹅", animal:"🦢",
+        tag:"【清醒的掌控者】",
+        desc:"天鹅在水面上优雅高贵，水下的脚却在拼命划水。你聪明、敏锐，且极其自律。你的守护神是天鹅，象征着极致的优雅和看似高傲实则深情的内心。你不轻易展现脆弱，但那份藏在心底的爱意，足够释放出强大的守护光芒。你的魔法源于“野心与守护”。",
+        wand:"适配魔杖：黑刺李木，龙的心弦｜最强大的武力值" },
+    R: { house:"🦅 拉文克劳", patronus:"专属守护神：猫头鹰", animal:"🦉",
+        tag:"【智慧的旁观者】",
+        desc:"你有一双能看透事物本质的眼睛，知识是你最好的武器。你的守护神是猫头鹰，它在黑夜中清醒，代表着极高的洞察力和理智。你有时候会显得有些清高，但你的内心世界极其丰富且深邃。你的魔法源于“智慧”。",
+        wand:"适配魔杖：黑胡桃木，雷鸟羽毛｜追求真理的渴望" }
+};
+
+function startTest(){
+    document.getElementById("home").style.display = "none";
+    document.getElementById("questionWrap").style.display = "block";
+    document.getElementById("resultWrap").style.display = "none";
+    cur = 0;
+    answerArr = [];
+    renderQ();
+}
+
+function renderQ(){
+    const q = questions[cur];
+    const progress = Math.round(((cur+1)/questions.length)*100);
+    document.getElementById("progressBar").style.width = progress + "%";
+    document.getElementById("qText").innerText = `${cur+1}. ${q.q}`;
+    document.getElementById("prevBtn").disabled = cur === 0;
+    let html = "";
+    q.o.forEach((item,i)=>{
+        let active = answerArr[cur] === i ? "active" : "";
+        html += `<div class="option ${active}" onclick="pickOpt(${i},this)">${item}</div>`;
+    });
+    document.getElementById("optWrap").innerHTML = html;
+}
+
+function pickOpt(i,dom){
+    document.querySelectorAll(".option").forEach(el=>el.classList.remove("active"));
+    dom.classList.add("active");
+    answerArr[cur] = i;
+}
+
+function nextQ(){
+    if(answerArr[cur] === undefined){ alert("请选择一个答案哦"); return; }
+    cur++;
+    if(cur >= questions.length){
+        localStorage.setItem(DONE_KEY, "1");
+        localStorage.setItem(ANSWER_KEY, JSON.stringify(answerArr));
+        showResult();
+        return;
+    }
+    renderQ();
+}
+
+function prevQ(){
+    if(cur > 0){ cur--; renderQ(); }
+}
+
+function calcHouse(){
+    const count = { G:0, H:0, S:0, R:0 };
+    answerArr.forEach((optIdx,idx)=>{
+        const flag = questions[idx].score[optIdx];
+        if(flag) count[flag]++;
+    });
+    let maxKey = "G", maxVal = -1;
+    for(let k in count){
+        if(count[k] > maxVal){ maxVal = count[k]; maxKey = k; }
+    }
+    return maxKey;
+}
+
+function showResult(){
+    document.getElementById("home").style.display = "none";
+    document.getElementById("questionWrap").style.display = "none";
+    document.getElementById("resultWrap").style.display = "block";
+
+    const res = resultData[calcHouse()];
+    document.getElementById("houseName").innerText = res.house;
+    document.getElementById("patronusName").innerText = res.patronus;
+    document.getElementById("patronusAnimal").innerText = res.animal;
+    document.getElementById("tagText").innerText = res.tag;
+    document.getElementById("resDesc").innerText = res.desc;
+    document.getElementById("wandText").innerText = res.wand;
+}
+
+// 页面加载：若已测过，先还原答案再出结果（修复第二次打开看不到结果的问题）
+window.addEventListener("DOMContentLoaded", function(){
+    if(localStorage.getItem(DONE_KEY)){
+        const saved = JSON.parse(localStorage.getItem(ANSWER_KEY) || "[]");
+        answerArr = saved.length === questions.length ? saved : Array(questions.length).fill(0);
+        showResult();
+    }
+});
+</script>
+</body>
+</html>
