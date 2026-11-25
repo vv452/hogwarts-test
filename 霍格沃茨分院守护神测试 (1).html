@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>霍格沃茨分院与专属守护神测试</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    color: #fff;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255, 215, 120, 0.18), transparent 26%),
+      radial-gradient(circle at 80% 10%, rgba(180, 160, 255, 0.18), transparent 28%),
+      radial-gradient(circle at 50% 90%, rgba(120, 200, 255, 0.15), transparent 32%),
+      linear-gradient(160deg, #04060d 0%, #070b20 40%, #0b1030 70%, #06091a 100%);
+    overflow-x: hidden;
+    position: relative;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* 星空层 */
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, #ffffff 50%, transparent 51%),
+      radial-gradient(1px 1px at 60% 70%, #ffffff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 80% 20%, #ffe27a 50%, transparent 51%),
+      radial-gradient(1px 1px at 40% 80%, #d9c8ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 50%, #ffffff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 10% 60%, #9fd2ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 35% 15%, #ffffff 50%, transparent 51%),
+      radial-gradient(1px 1px at 70% 40%, #ffd777 50%, transparent 51%);
+    opacity: 0.85;
+  }
+
+  /* 金色魔法线 */
+  .gold-threads {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 48%, rgba(255, 210, 110, 0.18) 49.5%, transparent 51%),
+      linear-gradient(25deg, transparent 40%, rgba(255, 225, 150, 0.12) 41.5%, transparent 43%),
+      linear-gradient(160deg, transparent 55%, rgba(255, 200, 90, 0.14) 56.5%, transparent 58%);
+  }
+
+  /* 低透明魔法图案（题目页 / 结果页通用） */
+  .magic-patterns {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image:
+      radial-gradient(circle at 15% 25%, #ffd777 0 2px, transparent 3px),
+      radial-gradient(circle at 85% 35%, #c9b6ff 0 2px, transparent 3px),
+      radial-gradient(circle at 35% 75%, #7fd1ff 0 2px, transparent 3px),
+      radial-gradient(circle at 75% 85%, #ffd777 0 2px, transparent 3px),
+      repeating-linear-gradient(45deg, rgba(255, 215, 120, 0.35) 0 1px, transparent 1px 14px),
+      repeating-linear-gradient(-45deg, rgba(180, 160, 255, 0.25) 0 1px, transparent 1px 18px);
+  }
+
+  /* 漂浮粒子 */
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(2px 2px at 25% 45%, rgba(255, 230, 150, 0.9), transparent 3px),
+      radial-gradient(1.5px 1.5px at 65% 25%, rgba(210, 190, 255, 0.8), transparent 3px),
+      radial-gradient(1px 1px at 50% 65%, rgba(255, 255, 255, 0.8), transparent 2px),
+      radial-gradient(1.5px 1.5px at 15% 80%, rgba(170, 220, 255, 0.7), transparent 3px),
+      radial-gradient(1px 1px at 85% 70%, rgba(255, 215, 120, 0.8), transparent 2px);
+    animation: float 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes float {
+    from { transform: translateY(0) translateX(0); opacity: 0.75; }
+    to { transform: translateY(-10px) translateX(6px); opacity: 1; }
+  }
+
+  /* 主体容器 */
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 460px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+
+  .page {
+    display: none;
+    width: 100%;
+  }
+  .page.active {
+    display: block;
+  }
+
+  /* 通用卡片：首页 / 题目 / 结果 / 拦截页统一结构 */
+  .card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    background: linear-gradient(145deg, rgba(18, 22, 50, 0.92), rgba(10, 14, 34, 0.92));
+    border: 1px solid rgba(210, 180, 120, 0.32);
+    border-radius: 22px;
+    padding: 36px 28px;
+    box-shadow:
+      0 0 0 1px rgba(255, 215, 120, 0.08) inset,
+      0 18px 60px rgba(0, 0, 0, 0.45),
+      0 0 40px rgba(120, 90, 255, 0.18);
+    backdrop-filter: blur(14px);
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 215, 120, 0.12);
+    pointer-events: none;
+  }
+
+  .title {
+    font-size: 28px;
+    text-align: center;
+    color: #ffe9a8;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    text-shadow: 0 0 18px rgba(255, 215, 120, 0.45);
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #d9c8ff;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  /* 封面插画区：分院帽 + 魔杖 */
+  .cover-art {
+    position: relative;
+    height: 210px;
+    margin: 18px 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sorting-hat {
+    position: relative;
+    width: 180px;
+    height: 190px;
+    z-index: 3;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.55));
+  }
+
+  .hat-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .decor-wand {
+    position: absolute;
+    bottom: 40px;
+    right: 28px;
+    width: 110px;
+    height: 10px;
+    background: linear-gradient(90deg, #8a6a3a, #d7b57a 40%, #8a6a3a);
+    border-radius: 10px;
+    transform: rotate(-20deg);
+    transform-origin: left center;
+    box-shadow: 0 0 14px rgba(255, 215, 120, 0.55);
+    z-index: 2;
+  }
+
+  .decor-wand::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle, #fff3c4 0%, #ffd777 40%, transparent 70%);
+    border-radius: 50%;
+    animation: spark 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes spark {
+    from { opacity: 0.6; transform: translateY(-50%) scale(1); }
+    to { opacity: 1; transform: translateY(-50%) scale(1.25); }
+  }
+
+  /* 封面介绍语 */
+  .intro {
+    color: #e6ddff;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  .intro strong { color: #ffd777; }
+
+  .primary-btn {
+    width: 100%;
+    padding: 16px;
+    margin-top: 24px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #7c5cff, #5a3fd1);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(124, 92, 255, 0.45);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(124, 92, 255, 0.6);
+  }
+
+  /* 题目区 */
+  .question {
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    color: #f5f1ff;
+  }
+
+  .opt {
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid rgba(210, 190, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(40, 44, 75, 0.6);
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .opt:hover {
+    background: rgba(90, 70, 160, 0.4);
+    border-color: #b8a1ff;
+  }
+
+  .next-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 12px;
+    border: none;
+    background: #7c5cff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: none;
+  }
+
+  .next-btn.show { display: block; }
+
+  /* 结果页 */
+  .result-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .result-box .title {
+    margin-bottom: 4px;
+  }
+
+  .house-tag {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffe9a8;
+    text-shadow: 0 0 16px rgba(255, 215, 120, 0.45);
+  }
+
+  .patronus {
+    display: inline-block;
+    align-self: center;
+    font-size: 17px;
+    color: #ffdd99;
+    background: rgba(255, 215, 120, 0.12);
+    border: 1px solid rgba(255, 215, 120, 0.25);
+    border-radius: 999px;
+    padding: 10px 18px;
+    line-height: 1.4;
+  }
+
+  .desc {
+    line-height: 1.8;
+    color: #e2ddf4;
+    font-size: 15px;
+    text-align: left;
+    background: rgba(40, 44, 75, 0.45);
+    border-radius: 14px;
+    padding: 18px 18px;
+    white-space: pre-line;
+  }
+
+  .wand-info {
+    color: #b8a1ff;
+    font-size: 14px;
+    line-height: 1.6;
+    border-top: 1px solid rgba(180, 160, 255, 0.2);
+    padding-top: 14px;
+  }
+
+  .blessing {
+    color: #ffe9c2;
+    font-size: 14.5px;
+    line-height: 1.8;
+    text-align: left;
+    background: rgba(255, 215, 120, 0.08);
+    border-left: 2px solid rgba(255, 215, 120, 0.4);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .tip {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+</style>
+</head>
+<body>
+
+<script>
+  // 清理旧版本遗留的一次性标记（结果持久化由主脚本管理）
+  try { localStorage.removeItem('hogwarts_done'); } catch (e) {}
+</script>
+
+<div class="stars" aria-hidden="true"></div>
+<div class="gold-threads" aria-hidden="true"></div>
+<div class="magic-patterns" aria-hidden="true"></div>
+<div class="particles" aria-hidden="true"></div>
+
+<div class="container">
+
+  <!-- 封面页 -->
+  <div class="page active" id="page0">
+    <div class="card">
+      <h1 class="title">🧙‍♂️ 霍格沃茨分院与专属守护神测试</h1>
+      <p class="subtitle">魔法部警告：你体内的魔法觉醒，请在这里寻找你的归属与灵魂守护。</p>
+
+      <div class="cover-art">
+        <div class="sorting-hat">
+          <svg class="hat-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="分院帽">
+            <defs>
+              <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#6b4520"/>
+                <stop offset="0.55" stop-color="#452a11"/>
+                <stop offset="1" stop-color="#2a1808"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 宽大下垂的帽檐 -->
+            <path d="M22 150 Q100 128 178 150 Q168 172 100 172 Q32 172 22 150 Z"
+                  fill="#3a2410" stroke="#7a5a2a" stroke-width="2"/>
+
+            <!-- 尖顶歪斜下垂的帽身 -->
+            <path d="M48 150
+                     C42 118 52 80 84 46
+                     C90 38 98 34 104 38
+                     C112 42 110 52 104 58
+                     C126 78 142 116 152 150
+                     Z"
+                  fill="url(#hatGrad)" stroke="#6b4a22" stroke-width="2"/>
+
+            <!-- 旧帽褶皱 -->
+            <path d="M70 148 C66 120 72 92 88 64" fill="none" stroke="#2a1808" stroke-width="2" opacity="0.55"/>
+            <path d="M128 148 C132 120 126 92 112 68" fill="none" stroke="#2a1808" stroke-width="2" opacity="0.55"/>
+            <path d="M100 150 C98 120 100 92 102 66" fill="none" stroke="#5a3a1a" stroke-width="1.5" opacity="0.5"/>
+
+          </svg>
+        </div>
+        <div class="decor-wand"></div>
+      </div>
+
+      <p class="intro">
+        分院帽即将触碰你的额头。<br />
+        它不会只看你的勇敢，也会读你的忠诚、智慧与野心。<br />
+        十道情境选择，揭开你心底真正属于的那座城堡；<br />
+        再从你最快乐的记忆里，召唤出只属于你的守护神。<br />
+        <strong>你的每一次选择，都在决定你属于哪个学院，以及谁会成为你最深处的守护灵。</strong>
+      </p>
+
+      <button class="primary-btn" onclick="startTest()">开始测试</button>
+
+      <p class="tip">⚠️ 同人趣味测试，仅供娱乐，非官方哈利波特测试</p>
+    </div>
+  </div>
+
+  <!-- 题目容器（每题一个完整卡片） -->
+  <div id="questionWrap"></div>
+
+  <!-- 结果页 -->
+  <div class="page" id="resultPage" style="display:none">
+    <div class="card result-box">
+      <h2 class="title">✨ 你的分院 & 守护神 ✨</h2>
+      <div class="house-tag" id="houseName">分院结果生成中…</div>
+      <div class="patronus" id="patronusName"></div>
+      <div class="desc" id="descText"></div>
+      <div class="wand-info" id="wandText"></div>
+      <div class="blessing" id="blessingText"></div>
+      <p class="tip">本测试为同人创作，与华纳、哈利波特官方无关。</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 每题选项对应学院：G格兰芬多 / H赫奇帕奇 / R拉文克劳 / S斯莱特林
+  const questions = [
+    {
+      q: "收到霍格沃茨录取通知书那天，你最想带上什么去学校？",
+      o: [
+        { txt: "什么都不带，我已经准备好去冒险了", key: "G" },
+        { txt: "带上我最喜欢的舒适毛毯和零食", key: "H" },
+        { txt: "带一本厚厚的历史书或百科全书", key: "R" },
+        { txt: "带上我的小猫/小狗/猫头鹰，它是我的伙伴", key: "S" }
+      ]
+    },
+    {
+      q: "分院帽悄悄对你说：你藏着一个秘密，它是？",
+      o: [
+        { txt: "我害怕的时候也想哭，但我会硬着头皮直面挑战", key: "G" },
+        { txt: "我会深夜偷偷溜进厨房，和家养小精灵分享食物", key: "H" },
+        { txt: "我喜欢观察、收集别人不知道的冷门知识", key: "R" },
+        { txt: "我有很远的目标，希望未来能拥有话语权与力量", key: "S" }
+      ]
+    },
+    {
+      q: "霍格沃茨特快上，你更愿意待在哪种车厢？",
+      o: [
+        { txt: "和大家激烈讨论魁地奇、冒险故事，热闹热血", key: "G" },
+        { txt: "和少数挚友安静坐着，分享巧克力蛙卡片", key: "H" },
+        { txt: "独自坐在角落看书，沉浸自己的世界", key: "R" },
+        { txt: "主动结识不同的人，拓展自己的人脉", key: "S" }
+      ]
+    },
+    {
+      q: "在禁林发现一只受伤的神奇动物，你的第一反应？",
+      o: [
+        { txt: "立刻上前尝试救助，顾不上危险", key: "G" },
+        { txt: "先温柔安抚，想办法把它安置好照顾", key: "H" },
+        { txt: "保持距离，先查阅资料，弄清楚它是什么", key: "R" },
+        { txt: "先环顾四周，确认没有埋伏再行动，谨慎自保", key: "S" }
+      ]
+    },
+    {
+      q: "在有求必应屋门口碰到对头，你会？",
+      o: [
+        { txt: "拔出魔杖，坦然接受决斗，不退缩", key: "G" },
+        { txt: "不想冲突，选择避开，不卷入纷争", key: "H" },
+        { txt: "好奇起来，提议一起进去探索秘密", key: "R" },
+        { txt: "不动声色，想好后续怎么占据上风", key: "S" }
+      ]
+    },
+    {
+      q: "你最渴望掌握哪一种魔法？",
+      o: [
+        { txt: "强大的战斗咒语，用来保护身边的人", key: "G" },
+        { txt: "治愈魔法，抚平伤痛，拯救生命", key: "H" },
+        { txt: "变形术，探索万物的可能性", key: "R" },
+        { txt: "幻影移形，掌握主动权，来去由自己", key: "S" }
+      ]
+    },
+    {
+      q: "对你来说，绝对不能妥协的是？",
+      o: [
+        { txt: "在危难面前背弃正义，临阵退缩", key: "G" },
+        { txt: "背叛信任自己的朋友，辜负他人的真心", key: "H" },
+        { txt: "停止思考，放弃求知与探索", key: "R" },
+        { txt: "任由别人践踏你的尊严与底线", key: "S" }
+      ]
+    },
+    {
+      q: "大战来临，你选择的位置是？",
+      o: [
+        { txt: "冲在前线，直面黑暗，奋勇作战", key: "G" },
+        { txt: "留在后方，稳定支援，照顾伤员与同伴", key: "H" },
+        { txt: "分析局势，寻找敌人的破绽", key: "R" },
+        { txt: "制定计划，抓住关键时机一击制胜", key: "S" }
+      ]
+    },
+    {
+      q: "你最喜欢霍格沃茨哪个角落？",
+      o: [
+        { txt: "格兰芬多塔楼，充满热血与烟火", key: "G" },
+        { txt: "黑湖畔草地，安静松弛，适合放空", key: "H" },
+        { txt: "图书馆禁书区，藏着无数未知知识", key: "R" },
+        { txt: "有求必应屋，只属于自己的秘密基地", key: "S" }
+      ]
+    },
+    {
+      q: "如果魔法只能做一件事，你会选择？",
+      o: [
+        { txt: "勇敢对抗黑暗，守护无辜的人", key: "G" },
+        { txt: "善待所有生灵，让弱小者被温柔对待", key: "H" },
+        { txt: "解开世界所有未解之谜，追寻真理", key: "R" },
+        { txt: "建立属于自己的秩序，掌控自己的命运", key: "S" }
+      ]
+    }
+  ];
+
+  // 学院资料 + 修正后的守护神池
+  const houseData = {
+    G: {
+      name: "🦁 格兰芬多",
+      title: "勇敢、胆识、正义、无畏",
+      patronusPool: ["🦌雄鹿", "🐎母马", "🦊狐狸", "🐺狼", "🦁狮子", "🐶猎狗"],
+      desc: "分院帽把你分到格兰芬多。你骨子里拥有狮子般的勇气，不是不害怕，而是恐惧面前依然选择站出来。你重视正义，愿意为守护他人挺身而出，热烈坦荡，是值得信赖的伙伴。",
+      blessing: "愿你无论走到哪里，都敢为心里认定的事挺身而出。黑暗来临时，你的勇气本身，就是身边人最安稳的那束光；哪怕前路未知，也记得先握紧自己的魔杖。",
+      wand: "常见适配：冬青木·凤凰羽毛、橡木·独角兽毛"
+    },
+    H: {
+      name: "🦡 赫奇帕奇",
+      title: "忠诚、勤勉、善良、公平",
+      patronusPool: ["🦦水獭", "🦡獾", "🐰野兔", "🦔刺猬", "🐦知更鸟", "🐐山羊"],
+      desc: "你属于赫奇帕奇。很多人低估赫奇帕奇，但这里拥有最真诚、最坚韧的灵魂。你重视忠诚与公平，善待每一个生命，踏实耐心，不追逐耀眼的光环，却永远是最可靠的后盾。",
+      blessing: "愿你的温柔始终被人看见，你的付出都能被好好珍藏。这份踏实与善良，也许不会换来最响亮的掌声，却会在漫长岁月里，慢慢长成你最坚固的铠甲。",
+      wand: "常见适配：梨木·独角兽毛、榛木·独角兽毛"
+    },
+    R: {
+      name: "🦅 拉文克劳",
+      title: "智慧、求知、好奇、独特",
+      patronusPool: ["🦉猫头鹰", "🦅鹰", "🐬海豚", "🦢天鹅", "🐎飞马", "🐈猫"],
+      desc: "欢迎来到拉文克劳。智慧不止是书本知识，更是好奇心、独立思考与接纳不同。你热爱探索、偏爱思考，享受解开谜题的快乐，拥有丰富深邃的精神世界。",
+      blessing: "愿你永远保有这份好奇与思考，不盲从、不随波逐流。那些你独自琢磨过的问题、那些没人在意的冷门角落，终会带你去到别人到不了的地方。",
+      wand: "常见适配：黑胡桃木·雷鸟羽毛、梧桐木·凤凰羽毛"
+    },
+    S: {
+      name: "🐍 斯莱特林",
+      title: "野心、智谋、自保、远见",
+      patronusPool: ["🦢天鹅", "🐍蛇", "🐈‍⬛黑猫", "🦊狐狸", "🦌母鹿", "🐺狼"],
+      desc: "你是斯莱特林。斯莱特林不等于邪恶，这里的人足智多谋、目标明确、懂得审时度势，重视自己的价值与所爱之人。你有野心，有远见，愿意为自己的目标默默努力。",
+      blessing: "愿你既守得住自己的目标，也留得住心底的温柔。你谋划前路、步步为营的同时，也请记得善待那个一直努力的自己；你在乎的人，值得你收起锋芒、认真守护。",
+      wand: "常见适配：黑刺李木·龙心弦、山楂木·龙心弦"
+    }
+  };
+
+  let current = 0;
+  let score = { G: 0, H: 0, R: 0, S: 0 };
+  let selected = null;
+
+  const STORE_KEY = 'hw_result';
+
+  function saveResult(key, patronus) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ house: key, patronus: patronus })); } catch (e) {}
+  }
+
+  function loadResult() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      if (data && houseData[data.house]) return data;
+    } catch (e) {}
+    return null;
+  }
+
+  function fillResult(key, patronus) {
+    const house = houseData[key];
+    document.getElementById('houseName').innerText = house.name;
+    document.getElementById('patronusName').innerText = '✨ 你的守护神：' + patronus;
+    document.getElementById('descText').innerText = house.desc;
+    document.getElementById('wandText').innerText = house.wand;
+    document.getElementById('blessingText').innerText = house.blessing;
+  }
+
+  function resetResult() {
+    document.getElementById('houseName').innerText = '分院结果生成中…';
+    document.getElementById('patronusName').innerText = '';
+    document.getElementById('descText').innerText = '';
+    document.getElementById('wandText').innerText = '';
+    document.getElementById('blessingText').innerText = '';
+  }
+
+  function startTest() {
+    current = 0;
+    score = { G: 0, H: 0, R: 0, S: 0 };
+    selected = null;
+    renderQuestion();
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('active');
+      p.style.display = '';
+    });
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = '';
+      el.classList.add('active');
+    }
+  }
+
+  function renderQuestion() {
+    const q = questions[current];
+    const wrap = document.getElementById('questionWrap');
+    let html = '<div class="page active" id="q' + current + '"><div class="card">';
+    html += '<div class="question">' + (current + 1) + '. ' + q.q + '</div>';
+    q.o.forEach(function (opt, idx) {
+      html += '<button class="opt" onclick="select(' + idx + ')">' + opt.txt + '</button>';
+    });
+    html += '<button class="next-btn" id="nextBtn" onclick="next()">下一题</button>';
+    html += '</div></div>';
+    wrap.innerHTML = html;
+    selected = null;
+    document.getElementById('nextBtn').classList.remove('show');
+  }
+
+  function select(idx) {
+    selected = idx;
+    const q = questions[current];
+    const k = q.o[idx].key;
+    score[k]++;
+    document.querySelectorAll('.opt').forEach(function (b, i) {
+      b.style.background = i === idx ? 'rgba(124,92,255,0.4)' : 'rgba(40,44,75,0.6)';
+    });
+    document.getElementById('nextBtn').classList.add('show');
+  }
+
+  function next() {
+    current++;
+    if (current >= questions.length) {
+      calcResult();
+      return;
+    }
+    renderQuestion();
+  }
+
+  function calcResult() {
+    let maxKey = 'G';
+    let maxVal = 0;
+    for (let k in score) {
+      if (score[k] > maxVal) {
+        maxVal = score[k];
+        maxKey = k;
+      }
+    }
+
+    const house = houseData[maxKey];
+    const p = house.patronusPool[Math.floor(Math.random() * house.patronusPool.length)];
+
+    fillResult(maxKey, p);
+    saveResult(maxKey, p);
+    showPage('resultPage');
+  }
+
+  // 打开页面：已有结果则直接回到结果页，否则进入封面
+  function init() {
+    const saved = loadResult();
+    if (saved) {
+      fillResult(saved.house, saved.patronus || houseData[saved.house].patronusPool[0]);
+      showPage('resultPage');
+    } else {
+      resetResult();
+      showPage('page0');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+
+</script>
+
+</body>
+</html>
